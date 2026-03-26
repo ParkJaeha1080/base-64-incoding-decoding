@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 인코더 & 디코더</title>
+
+<style>
+* {
+    box-sizing: border-box; /* 🔥 핵심 */
+}
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+.glass {
+    width: 100%;
+    max-width: 520px;
+    padding: 25px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+h2 {
+    text-align: center;
+}
+
+/* 🔥 textarea 가로 완벽 맞춤 */
+textarea {
+    width: 100%;
+    height: 110px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+    margin-top: 5px;
+    resize: none;
+    outline: none;
+    font-size: 14px;
+}
+
+/* 버튼 */
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.35);
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.copy-btn {
+    margin-top: 10px;
+}
+
+.result {
+    margin-top: 10px;
+}
+
+/* 애니메이션 */
+.flash {
+    animation: flashAnim 0.3s;
+}
+
+@keyframes flashAnim {
+    0% { background: #a8ffb0; }
+    100% { background: white; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="glass">
+    <h2>🔐 Base64 인코더 & 디코더</h2>
+
+    <label>텍스트 입력</label>
+    <textarea id="input"></textarea>
+
+    <div class="buttons">
+        <button onclick="encodeText()">🔐 인코딩</button>
+        <button onclick="decodeText()">🔓 디코딩</button>
+    </div>
+
+    <button class="copy-btn" onclick="copyResult()">📋 결과 복사</button>
+
+    <div class="result">
+        <label>결과</label>
+        <textarea id="output" readonly></textarea>
+    </div>
+</div>
+
+<script>
+function encodeText() {
+    const text = document.getElementById("input").value.trim();
+    if (!text) return alert("텍스트 입력");
+
+    const bytes = new TextEncoder().encode(text);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    setOutput(btoa(binary));
+}
+
+function decodeText() {
+    let text = document.getElementById("input").value.trim().replace(/\s/g,'');
+    if (!text) return alert("Base64 입력");
+
+    try {
+        const binary = atob(text);
+        const bytes = new Uint8Array([...binary].map(c=>c.charCodeAt(0)));
+        setOutput(new TextDecoder().decode(bytes));
+    } catch {
+        setOutput("❌ 오류");
+    }
+}
+
+function setOutput(text) {
+    const out = document.getElementById("output");
+    out.value = text;
+    out.classList.add("flash");
+    setTimeout(()=>out.classList.remove("flash"),300);
+}
+
+function copyResult() {
+    const out = document.getElementById("output");
+    out.select();
+    document.execCommand("copy");
+    alert("✅ 복사 완료");
+}
+</script>
+
+</body>
+</html>
