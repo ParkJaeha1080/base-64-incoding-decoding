@@ -3,11 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Base64 인코더 & 디코더</title>
+<title>인코더 & 디코더</title>
 
 <style>
 * {
     box-sizing: border-box;
+}
+
+:root {
+    color-scheme: light;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --text: #17181a;
+    --muted: #6f7379;
+    --border: #e1e3e6;
+    --button: #f0f1f3;
+    --button-hover: #e7e9ec;
+    --primary: #17181a;
+    --primary-text: #ffffff;
+}
+
+body.dark {
+    color-scheme: dark;
+    --bg: #111214;
+    --card: #191a1d;
+    --text: #f1f2f3;
+    --muted: #9a9da3;
+    --border: #2b2d31;
+    --button: #24262a;
+    --button-hover: #303238;
+    --primary: #f1f2f3;
+    --primary-text: #111214;
 }
 
 body {
@@ -16,44 +42,69 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #74ebd5, #acb6e5);
-    font-family: Arial, sans-serif;
-    padding: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    padding: 24px;
+    transition: background 0.2s, color 0.2s;
 }
 
-.glass {
+.container {
     width: 100%;
-    max-width: 520px;
-    padding: 25px;
-    border-radius: 20px;
-    backdrop-filter: blur(15px);
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
+    max-width: 620px;
 }
 
-h2 {
-    text-align: center;
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+h1 {
+    font-size: 21px;
+    font-weight: 650;
+    margin: 0;
+}
+
+.theme-btn {
+    width: auto;
+    min-width: 72px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
 }
 
 .tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 18px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
 }
 
 .tab {
-    background: rgba(255,255,255,0.3);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 10px;
-    padding: 11px;
-    cursor: pointer;
-    font-weight: bold;
+    width: auto;
+    padding: 9px 13px;
+    margin: 0;
+    border-radius: 7px 7px 0 0;
+    background: transparent;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+    background: var(--button);
 }
 
 .tab.active {
-    background: rgba(255,255,255,0.65);
+    color: var(--text);
+    border-bottom-color: var(--text);
 }
 
 .panel {
@@ -64,135 +115,185 @@ h2 {
     display: block;
 }
 
+label {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
 textarea {
     width: 100%;
-    height: 110px;
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-    margin-top: 5px;
-    resize: none;
+    height: 130px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    padding: 12px;
+    resize: vertical;
     outline: none;
     font-size: 14px;
-    font-family: monospace;
+    line-height: 1.5;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+textarea:focus {
+    border-color: #888c92;
+}
+
+textarea::placeholder {
+    color: var(--muted);
 }
 
 .buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    display: flex;
+    gap: 8px;
     margin-top: 10px;
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.35);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--button);
+    color: var(--text);
     cursor: pointer;
-    font-weight: bold;
+    font-size: 14px;
+}
+
+button:hover {
+    background: var(--button-hover);
+}
+
+.buttons button:first-child {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
 }
 
 .copy-btn {
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 .result {
-    margin-top: 10px;
+    margin-top: 18px;
+}
+
+.result textarea {
+    min-height: 130px;
 }
 
 .flash {
-    animation: flashAnim 0.3s;
+    animation: flashAnim 0.25s;
 }
 
 @keyframes flashAnim {
-    0% { background: #a8ffb0; }
-    100% { background: white; }
+    0% { border-color: #777; }
+    100% { border-color: var(--border); }
+}
+
+@media (max-width: 520px) {
+    body {
+        padding: 12px;
+        align-items: flex-start;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .header {
+        margin-top: 8px;
+    }
 }
 </style>
 </head>
 
 <body>
-
-<div class="glass">
-    <h2>🔐 인코더 & 디코더</h2>
-
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('base64', this)">🔐 Base64</button>
-        <button class="tab" onclick="switchTab('hex', this)">🔢 ASCII ↔ HEX</button>
+<div class="container">
+    <div class="header">
+        <h1>인코더 & 디코더</h1>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeButton">다크</button>
     </div>
 
-    <div id="base64" class="panel active">
-        <label>텍스트 입력</label>
-        <textarea id="input"></textarea>
-
-        <div class="buttons">
-            <button onclick="encodeText()">🔐 인코딩</button>
-            <button onclick="decodeText()">🔓 디코딩</button>
+    <div class="card">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('base64', this)">Base64</button>
+            <button class="tab" onclick="switchTab('hex', this)">ASCII ↔ HEX</button>
         </div>
 
-        <button class="copy-btn" onclick="copyResult('output')">📋 결과 복사</button>
+        <div id="base64" class="panel active">
+            <label for="input">텍스트</label>
+            <textarea id="input" placeholder="텍스트 또는 Base64 값을 입력하세요"></textarea>
 
-        <div class="result">
-            <label>결과</label>
-            <textarea id="output" readonly></textarea>
+            <div class="buttons">
+                <button onclick="encodeText()">인코딩</button>
+                <button onclick="decodeText()">디코딩</button>
+            </div>
+
+            <button class="copy-btn" onclick="copyResult('output')">결과 복사</button>
+
+            <div class="result">
+                <label for="output">결과</label>
+                <textarea id="output" readonly></textarea>
+            </div>
         </div>
-    </div>
 
-    <div id="hex" class="panel">
-        <label>ASCII / HEX 입력</label>
-        <textarea id="hexInput" placeholder="ASCII 텍스트 또는 HEX 입력 (예: 48 65 6C 6C 6F)"></textarea>
+        <div id="hex" class="panel">
+            <label for="hexInput">ASCII / HEX</label>
+            <textarea id="hexInput" placeholder="ASCII 텍스트 또는 HEX 값 입력"></textarea>
 
-        <div class="buttons">
-            <button onclick="asciiToHex()">🔤 ASCII → HEX</button>
-            <button onclick="hexToAscii()">🔢 HEX → ASCII</button>
-        </div>
+            <div class="buttons">
+                <button onclick="asciiToHex()">ASCII → HEX</button>
+                <button onclick="hexToAscii()">HEX → ASCII</button>
+            </div>
 
-        <button class="copy-btn" onclick="copyResult('hexOutput')">📋 결과 복사</button>
+            <button class="copy-btn" onclick="copyResult('hexOutput')">결과 복사</button>
 
-        <div class="result">
-            <label>결과</label>
-            <textarea id="hexOutput" readonly></textarea>
+            <div class="result">
+                <label for="hexOutput">결과</label>
+                <textarea id="hexOutput" readonly></textarea>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
 function switchTab(tabId, button) {
-    document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
 
-    document.getElementById(tabId).classList.add('active');
-    button.classList.add('active');
+    document.getElementById(tabId).classList.add("active");
+    button.classList.add("active");
 }
 
 function encodeText() {
     const text = document.getElementById("input").value.trim();
-    if (!text) return alert("텍스트 입력");
+    if (!text) return alert("텍스트를 입력하세요.");
 
     const bytes = new TextEncoder().encode(text);
-    let binary = '';
-    bytes.forEach(b => binary += String.fromCharCode(b));
+    let binary = "";
+    bytes.forEach(byte => binary += String.fromCharCode(byte));
     setOutput("output", btoa(binary));
 }
 
 function decodeText() {
-    let text = document.getElementById("input").value.trim().replace(/\s/g,'');
-    if (!text) return alert("Base64 입력");
+    const text = document.getElementById("input").value.trim().replace(/\s/g, "");
+    if (!text) return alert("Base64 값을 입력하세요.");
 
     try {
         const binary = atob(text);
-        const bytes = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
+        const bytes = new Uint8Array([...binary].map(char => char.charCodeAt(0)));
         setOutput("output", new TextDecoder().decode(bytes));
     } catch {
-        setOutput("output", "❌ 오류");
+        setOutput("output", "오류: 올바른 Base64 값이 아닙니다.");
     }
 }
 
 function asciiToHex() {
     const text = document.getElementById("hexInput").value;
-    if (!text) return alert("ASCII 입력");
+    if (!text) return alert("ASCII 텍스트를 입력하세요.");
 
     const bytes = new TextEncoder().encode(text);
     const hex = [...bytes]
@@ -208,9 +309,10 @@ function hexToAscii() {
         .replace(/0x/gi, "")
         .replace(/\s+/g, "");
 
-    if (!hex) return alert("HEX 입력");
+    if (!hex) return alert("HEX 값을 입력하세요.");
+
     if (!/^[0-9a-fA-F]+$/.test(hex) || hex.length % 2 !== 0) {
-        setOutput("hexOutput", "❌ 올바른 HEX 형식이 아닙니다.");
+        setOutput("hexOutput", "오류: 올바른 HEX 값이 아닙니다.");
         return;
     }
 
@@ -220,7 +322,7 @@ function hexToAscii() {
         );
         setOutput("hexOutput", new TextDecoder().decode(bytes));
     } catch {
-        setOutput("hexOutput", "❌ 오류");
+        setOutput("hexOutput", "오류");
     }
 }
 
@@ -228,16 +330,32 @@ function setOutput(id, text) {
     const out = document.getElementById(id);
     out.value = text;
     out.classList.add("flash");
-    setTimeout(() => out.classList.remove("flash"), 300);
+    setTimeout(() => out.classList.remove("flash"), 250);
 }
 
 function copyResult(id) {
-    const out = document.getElementById(id);
-    navigator.clipboard.writeText(out.value).then(() => {
-        alert("✅ 복사 완료");
-    });
+    const value = document.getElementById(id).value;
+
+    if (!value) {
+        return alert("복사할 결과가 없습니다.");
+    }
+
+    navigator.clipboard.writeText(value)
+        .then(() => alert("복사했습니다."));
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    const isDark = document.body.classList.contains("dark");
+    document.getElementById("themeButton").textContent = isDark ? "라이트" : "다크";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    document.getElementById("themeButton").textContent = "라이트";
 }
 </script>
-
 </body>
 </html>
